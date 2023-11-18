@@ -2,12 +2,18 @@ package ru.kpfu.itis.arifulina.combcalc
 
 import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import ru.kpfu.itis.arifulina.combcalc.base.BaseActivity
 import ru.kpfu.itis.arifulina.combcalc.databinding.ActivityMainBinding
+import ru.kpfu.itis.arifulina.combcalc.model.FormulaModel
+import ru.kpfu.itis.arifulina.combcalc.ui.fragments.FormulaPageFragment
 import ru.kpfu.itis.arifulina.combcalc.ui.fragments.StartPageFragment
 import ru.kpfu.itis.arifulina.combcalc.utils.ActionType
+import ru.kpfu.itis.arifulina.combcalc.utils.FormulaFunctions
+import ru.kpfu.itis.arifulina.combcalc.utils.FormulaName
+import ru.kpfu.itis.arifulina.combcalc.utils.FormulaType
 import ru.kpfu.itis.arifulina.combcalc.utils.ParamsKey
 
 class MainActivity : BaseActivity() {
@@ -22,6 +28,16 @@ class MainActivity : BaseActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater).also {
             setContentView(it.root)
         }
+        FormulaPageFragment.newInstance(
+            FormulaModel(
+                FormulaName.URN_MODEL,
+                FormulaType.ALL_MARKED,
+                FormulaFunctions::urnModelAllMarked,
+                mutableListOf("n", "k", "m"),
+                "\$\$ P(A) = \\frac{C^k_m}{C^k_n} \$\$",
+                false
+            )
+        )
         initThemeListener()
         initTheme()
         if (supportFragmentManager.findFragmentByTag(StartPageFragment.START_PAGE_FRAGMENT_TAG) == null) {
@@ -60,16 +76,20 @@ class MainActivity : BaseActivity() {
         }.commit()
     }
 
-    private fun saveTheme(){
+    private fun saveTheme() {
         getSharedPreferences(ParamsKey.APP_CONFIG, Context.MODE_PRIVATE).edit().apply {
             putBoolean(ParamsKey.DARK_THEME, binding.switchTheme.isChecked)
             apply()
         }
     }
 
-    private fun initTheme(){
-        with(binding){
-            if (getSharedPreferences(ParamsKey.APP_CONFIG, Context.MODE_PRIVATE).getBoolean(ParamsKey.DARK_THEME, false)){
+    private fun initTheme() {
+        with(binding) {
+            if (getSharedPreferences(ParamsKey.APP_CONFIG, Context.MODE_PRIVATE).getBoolean(
+                    ParamsKey.DARK_THEME,
+                    false
+                )
+            ) {
                 switchTheme.isChecked = true
                 switchTheme.setThumbResource(R.drawable.light_mode_icon)
             } else {
@@ -79,8 +99,8 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun initThemeListener(){
-        with(binding){
+    private fun initThemeListener() {
+        with(binding) {
             switchTheme.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     switchTheme.setThumbResource(R.drawable.light_mode_icon)

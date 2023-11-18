@@ -27,9 +27,7 @@ class ArgumentInputHolder(
         this.item = item
         with(viewBinding) {
             tvArgumentName.text = "${item.name} = "
-            item.value?.let {
-                etArgumentInput.setText(item.value.toString())
-            }
+            etArgumentInput.setText(if (item.value == null) "" else item.value.toString())
         }
     }
 

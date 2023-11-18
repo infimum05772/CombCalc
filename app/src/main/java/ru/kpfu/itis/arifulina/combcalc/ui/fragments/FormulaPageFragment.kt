@@ -149,22 +149,20 @@ class FormulaPageFragment : Fragment(R.layout.fragment_formula_page) {
         with(binding) {
             when (tag) {
                 ParamsKey.ARGUMENTS_ADAPTER_TAG -> {
-                    if (!rvArguments.isComputingLayout && rvArguments.scrollState == SCROLL_STATE_IDLE) {
+                    rvArguments.post {
                         (rvArguments.adapter as? ArgumentInputAdapter)?.updateItem(
                             position,
                             arg
                         )
-                    } else {
                     }
                 }
 
                 ParamsKey.MULTIPLE_ARGUMENTS_ADAPTER_TAG -> {
-                    if (!rvMultipleArgs.isComputingLayout && rvMultipleArgs.scrollState == SCROLL_STATE_IDLE) {
+                    rvMultipleArgs.post {
                         (rvMultipleArgs.adapter as? ArgumentInputAdapter)?.updateItem(
                             position,
                             arg
                         )
-                    } else {
                     }
                 }
 
