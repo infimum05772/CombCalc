@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">CombCalc</string>
+    <string name="start_btn">start</string>
+    <string name="title">COMBcalc</string>
+    <string name="menu_title">choose chapter</string>
+    <string name="enter_args">Enter args:</string>
+    <string name="submit_btn">submit</string>
+    <string name="calculate">calculate</string>
+</resources>
