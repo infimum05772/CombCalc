@@ -29,7 +29,6 @@ class MainActivity : BaseActivity() {
             setContentView(it.root)
         }
         Class.forName("org.scilab.forge.jlatexmath.TeXFormula")
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode())
         initThemeListener()
         initTheme()
         if (supportFragmentManager.findFragmentByTag(StartPageFragment.START_PAGE_FRAGMENT_TAG) == null) {
