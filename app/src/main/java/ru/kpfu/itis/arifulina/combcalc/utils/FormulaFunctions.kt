@@ -39,7 +39,7 @@ object FormulaFunctions {
     }
 
     fun permutationsNoRepetitions(params: Map<String, Long>): Double {
-        val n = params["n"] ?: throw NullPointerException("not all the arguments are provided")
+        val n = params["n"] ?: throw FormulaFunctionException("not all the arguments are provided")
         if (n < 0) {
             throw FormulaFunctionException("n can't be less that 0")
         }

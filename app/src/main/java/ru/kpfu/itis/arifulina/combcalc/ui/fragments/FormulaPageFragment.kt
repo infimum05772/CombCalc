@@ -1,15 +1,16 @@
 package ru.kpfu.itis.arifulina.combcalc.ui.fragments
 
+import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.TextView
+import androidx.annotation.RequiresApi
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import ru.kpfu.itis.arifulina.combcalc.adapter.decorations.ListHorizontalDecorator
 import ru.kpfu.itis.arifulina.combcalc.adapter.decorations.ListVerticalDecorator
 import ru.kpfu.itis.arifulina.combcalc.R
@@ -42,13 +43,15 @@ class FormulaPageFragment : Fragment(R.layout.fragment_formula_page) {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun initViews() {
-        formula = arguments?.getSerializable(ParamsKey.FORMULA_MODEL_KEY) as? FormulaModel
+        formula = arguments?.getSerializable(ParamsKey.FORMULA_MODEL_KEY, FormulaModel::class.java)
         formula?.let { formula ->
             val formulaLatex = JLatexMathDrawable.builder(formula.formulaLatex)
                 .textSize(70F)

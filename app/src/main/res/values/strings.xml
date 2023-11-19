@@ -6,4 +6,5 @@
     <string name="enter_args">Enter args:</string>
     <string name="submit_btn">submit</string>
     <string name="calculate">calculate</string>
+    <string name="title_activity_splash">SplashActivity</string>
 </resources>

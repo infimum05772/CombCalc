@@ -28,16 +28,8 @@ class MainActivity : BaseActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater).also {
             setContentView(it.root)
         }
-        FormulaPageFragment.newInstance(
-            FormulaModel(
-                FormulaName.URN_MODEL,
-                FormulaType.ALL_MARKED,
-                FormulaFunctions::urnModelAllMarked,
-                mutableListOf("n", "k", "m"),
-                "\$\$ P(A) = \\frac{C^k_m}{C^k_n} \$\$",
-                false
-            )
-        )
+        Class.forName("org.scilab.forge.jlatexmath.TeXFormula")
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode())
         initThemeListener()
         initTheme()
         if (supportFragmentManager.findFragmentByTag(StartPageFragment.START_PAGE_FRAGMENT_TAG) == null) {
