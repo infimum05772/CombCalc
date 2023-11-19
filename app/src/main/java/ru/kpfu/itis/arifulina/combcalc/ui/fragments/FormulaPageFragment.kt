@@ -10,8 +10,14 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.isDigitsOnly
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.kpfu.itis.arifulina.combcalc.adapter.decorations.ListHorizontalDecorator
 import ru.kpfu.itis.arifulina.combcalc.adapter.decorations.ListVerticalDecorator
 import ru.kpfu.itis.arifulina.combcalc.R
@@ -27,6 +33,7 @@ import ru.kpfu.itis.arifulina.combcalc.ui.holder.ArgumentInputHolder
 import ru.kpfu.itis.arifulina.combcalc.utils.ParamsKey
 import ru.kpfu.itis.arifulina.combcalc.utils.getValueInPx
 import ru.noties.jlatexmath.JLatexMathDrawable
+import java.math.BigDecimal
 import java.text.DecimalFormat
 
 class FormulaPageFragment : Fragment(R.layout.fragment_formula_page) {
@@ -135,25 +142,30 @@ class FormulaPageFragment : Fragment(R.layout.fragment_formula_page) {
     private fun setResult(args: Map<String, Long>) {
         with(binding) {
             formula?.let {
-                try {
+                lifecycleScope.launch {
+                    pbCalculating.isVisible = true
                     tvError.visibility = View.GONE
                     tvError.text = ""
-                    tvResult.visibility = View.VISIBLE
-                    tvResult.text = formatBigNumbers(DecimalFormat("#.##########").format(it.formulaFunc.invoke(args)))
-                } catch (e: FormulaFunctionException) {
                     tvResult.visibility = View.GONE
                     tvResult.text = ""
-                    tvError.visibility = View.VISIBLE
-                    tvError.text = e.message
+                    runCatching {
+                        withContext(Dispatchers.IO) {
+                            async {
+                                it.formulaFunc.invoke(args)
+                            }
+                        }
+                    }.onSuccess { result ->
+                        pbCalculating.isVisible = false
+                        tvResult.visibility = View.VISIBLE
+                        tvResult.text = result.await().toPlainString()
+                    }.onFailure { e ->
+                        pbCalculating.isVisible = false
+                        tvError.visibility = View.VISIBLE
+                        tvError.text = e.message
+                    }
                 }
             }
         }
-    }
-
-    private fun formatBigNumbers(output: String): String {
-        return if (output.length > 16 && output.isDigitsOnly()) {
-            "${output.subSequence(0, 5)}*10^${output.length - 5}"
-        } else output
     }
 
     private fun onInputChanged(position: Int, arg: ArgumentModel, tag: String) {

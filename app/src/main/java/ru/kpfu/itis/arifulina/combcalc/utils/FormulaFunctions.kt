@@ -1,12 +1,15 @@
 package ru.kpfu.itis.arifulina.combcalc.utils
 
 import ru.kpfu.itis.arifulina.combcalc.exceptions.FormulaFunctionException
+import java.math.BigDecimal
+import java.math.MathContext
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 
 object FormulaFunctions {
-    fun placementsNoRepetitions(params: Map<String, Long>): Double {
+    private val mc : MathContext = MathContext.DECIMAL128
+    fun placementsNoRepetitions(params: Map<String, Long>): BigDecimal {
         val n = params["n"]
         val k = params["k"]
         if (n == null || k == null) {
@@ -24,7 +27,7 @@ object FormulaFunctions {
         return factWithBound(n, n - k)
     }
 
-    fun placementsWithRepetitions(params: Map<String, Long>): Double {
+    fun placementsWithRepetitions(params: Map<String, Long>): BigDecimal {
         val n = params["n"]
         val k = params["k"]
         if (n == null || k == null) {
@@ -39,7 +42,7 @@ object FormulaFunctions {
         return pow(n, k)
     }
 
-    fun permutationsNoRepetitions(params: Map<String, Long>): Double {
+    fun permutationsNoRepetitions(params: Map<String, Long>): BigDecimal {
         val n = params["n"] ?: throw FormulaFunctionException("not all the arguments are provided")
         if (n < 0) {
             throw FormulaFunctionException("n can't be less that 0")
@@ -47,7 +50,7 @@ object FormulaFunctions {
         return fact(n)
     }
 
-    fun permutationsWithRepetitions(params: Map<String, Long>): Double {
+    fun permutationsWithRepetitions(params: Map<String, Long>): BigDecimal {
         val n = params["n"]
         val k = params["k"]
         if (n == null || k == null) {
@@ -69,14 +72,14 @@ object FormulaFunctions {
         if (sum != n) {
             throw FormulaFunctionException("n1 + n2 + ... + nk != n")
         }
-        var res: Double = fact(n)
+        var res: BigDecimal = fact(n)
         for (i in 1..k) {
-            params["n$i"]?.let { res /= fact(it) }
+            params["n$i"]?.let { res.divide(fact(it), mc) }
         }
         return res
     }
 
-    fun combinationsNoRepetitions(params: Map<String, Long>): Double {
+    fun combinationsNoRepetitions(params: Map<String, Long>): BigDecimal {
         val n = params["n"]
         val k = params["k"]
         if (n == null || k == null) {
@@ -94,7 +97,7 @@ object FormulaFunctions {
         return binomialCoefficient(n, k)
     }
 
-    fun combinationsWithRepetitions(params: Map<String, Long>): Double {
+    fun combinationsWithRepetitions(params: Map<String, Long>): BigDecimal {
         val n = params["n"]
         val k = params["k"]
         if (n == null || k == null) {
@@ -112,7 +115,7 @@ object FormulaFunctions {
         return binomialCoefficient(n + k - 1, k)
     }
 
-    fun urnModelAllMarked(params: Map<String, Long>): Double {
+    fun urnModelAllMarked(params: Map<String, Long>): BigDecimal {
         val n = params["n"]
         val k = params["k"]
         val m = params["m"]
@@ -137,10 +140,10 @@ object FormulaFunctions {
         if (n < k) {
             throw FormulaFunctionException("n can't be less that k")
         }
-        return binomialCoefficient(m, k) / binomialCoefficient(n, k)
+        return binomialCoefficient(m, k).divide(binomialCoefficient(n, k), mc)
     }
 
-    fun urnModelRMarked(params: Map<String, Long>): Double {
+    fun urnModelRMarked(params: Map<String, Long>): BigDecimal {
         val n = params["n"]
         val k = params["k"]
         val m = params["m"]
@@ -176,47 +179,47 @@ object FormulaFunctions {
             throw FormulaFunctionException("n can't be less that k")
         }
         if (n - m < k - r) {
-            return 0.0
+            return BigDecimal.ZERO
         }
         return binomialCoefficient(m, r) * binomialCoefficient(
             n - m,
             k - r
-        ) / binomialCoefficient(n, k)
+        ).divide(binomialCoefficient(n, k), mc)
     }
 
-    private fun binomialCoefficient(n: Long, k: Long): Double {
-        return factWithBound(n, max(k, n - k)) / fact(min(k, n - k))
+    private fun binomialCoefficient(n: Long, k: Long): BigDecimal {
+        return factWithBound(n, max(k, n - k)).divide(fact(min(k, n - k)), mc)
     }
 
-    private fun factWithBound(n: Long, k: Long): Double {
+    private fun factWithBound(n: Long, k: Long): BigDecimal {
         if (n == 0.toLong() || n == 1.toLong() || k == n) {
-            return 1.0
+            return BigDecimal.ONE
         }
-        var res = 1.0
+        var res = BigDecimal.ONE
         for (i in k + 1..n) {
-            res *= i
+            res *= i.toBigDecimal()
         }
         return res
     }
 
-    private fun fact(value: Long): Double {
+    private fun fact(value: Long): BigDecimal {
         if (value == 0.toLong() || value == 1.toLong()) {
-            return 1.0
+            return BigDecimal.ONE
         }
-        var res = 1.0
+        var res = BigDecimal.ONE
         for (i in 2..value) {
-            res *= i
+            res *= i.toBigDecimal()
         }
         return res
     }
 
-    private fun pow(n: Long, k: Long): Double {
+    private fun pow(n: Long, k: Long): BigDecimal {
         if (n == 0.toLong() || n == 1.toLong()) {
-            return n.toDouble()
+            return n.toBigDecimal()
         }
-        var res = 1.0
+        var res = BigDecimal.ONE
         for (i in 1 .. k){
-            res *= n
+            res *= n.toBigDecimal()
         }
         return res
     }
