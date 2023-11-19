@@ -32,7 +32,7 @@ class SplashActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
-        }, 100)
+        }, 500)
     }
     override fun onDestroy() {
         super.onDestroy()

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import ru.kpfu.itis.arifulina.combcalc.adapter.decorations.ListHorizontalDecorator
@@ -26,6 +27,7 @@ import ru.kpfu.itis.arifulina.combcalc.ui.holder.ArgumentInputHolder
 import ru.kpfu.itis.arifulina.combcalc.utils.ParamsKey
 import ru.kpfu.itis.arifulina.combcalc.utils.getValueInPx
 import ru.noties.jlatexmath.JLatexMathDrawable
+import java.text.DecimalFormat
 
 class FormulaPageFragment : Fragment(R.layout.fragment_formula_page) {
     private var _binding: FragmentFormulaPageBinding? = null
@@ -108,14 +110,15 @@ class FormulaPageFragment : Fragment(R.layout.fragment_formula_page) {
             for (i in 0 until list.size) {
                 if (list[i] is ArgumentModel) {
                     (list[i] as ArgumentModel).value?.let {
-                        map.put((list[i] as ArgumentModel).name,
+                        map.put(
+                            (list[i] as ArgumentModel).name,
                             it
                         )
                     }
                     (rv.findViewHolderForLayoutPosition(i) as? ArgumentInputHolder)?.saveArg()
                         ?.let {
                             map.plusAssign(it)
-                            println(it.first + " " +  it.second)
+                            println(it.first + " " + it.second)
                         }
                 }
             }
@@ -136,8 +139,7 @@ class FormulaPageFragment : Fragment(R.layout.fragment_formula_page) {
                     tvError.visibility = View.GONE
                     tvError.text = ""
                     tvResult.visibility = View.VISIBLE
-                    tvResult.text =
-                        it.formulaFunc.invoke(args).toString()
+                    tvResult.text = formatBigNumbers(DecimalFormat("#.##########").format(it.formulaFunc.invoke(args)))
                 } catch (e: FormulaFunctionException) {
                     tvResult.visibility = View.GONE
                     tvResult.text = ""
@@ -146,6 +148,12 @@ class FormulaPageFragment : Fragment(R.layout.fragment_formula_page) {
                 }
             }
         }
+    }
+
+    private fun formatBigNumbers(output: String): String {
+        return if (output.length > 16 && output.isDigitsOnly()) {
+            "${output.subSequence(0, 5)}*10^${output.length - 5}"
+        } else output
     }
 
     private fun onInputChanged(position: Int, arg: ArgumentModel, tag: String) {

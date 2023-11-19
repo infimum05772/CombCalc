@@ -3,6 +3,7 @@ package ru.kpfu.itis.arifulina.combcalc.utils
 import ru.kpfu.itis.arifulina.combcalc.exceptions.FormulaFunctionException
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.round
 
 object FormulaFunctions {
     fun placementsNoRepetitions(params: Map<String, Long>): Double {
@@ -191,7 +192,7 @@ object FormulaFunctions {
         if (n == 0.toLong() || n == 1.toLong() || k == n) {
             return 1.0
         }
-        var res: Double = 1.0
+        var res = 1.0
         for (i in k + 1..n) {
             res *= i
         }
@@ -202,7 +203,7 @@ object FormulaFunctions {
         if (value == 0.toLong() || value == 1.toLong()) {
             return 1.0
         }
-        var res: Double = 1.0
+        var res = 1.0
         for (i in 2..value) {
             res *= i
         }
@@ -213,15 +214,9 @@ object FormulaFunctions {
         if (n == 0.toLong() || n == 1.toLong()) {
             return n.toDouble()
         }
-        var res: Double = 1.0
-        var value = n
-        var pow = k
-        while (pow > 0) {
-            if (pow % 2 == 1.toLong()) {
-                res *= value
-            }
-            value *= value
-            pow /= 2
+        var res = 1.0
+        for (i in 1 .. k){
+            res *= n
         }
         return res
     }
